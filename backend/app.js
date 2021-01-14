@@ -1,8 +1,9 @@
 const express = require('express')
 const app = express()
+require('express-async-errors')
 const morgan = require('morgan')
 const cors = require('cors')
-const { authCheck, unkownEndpoint } = require('./utils/middleware')
+const { authCheck, unkownEndpoint, errorHandler } = require('./utils/middleware')
 
 const userRouter = require('./controllers/users')
 
@@ -23,5 +24,6 @@ app.get('/', (req, res) => {
 });
 
 app.use(unkownEndpoint);
+app.use(errorHandler);
 
 module.exports = app

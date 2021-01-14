@@ -1,12 +1,12 @@
 const supertest = require('supertest')
 const app = require('../app')
-const { User } = require('../mongo')
+const { User, closeCon } = require('../mongo')
 const mongoose = require('mongoose')
 
 const api = supertest(app);
 
 beforeEach(async () => {
-})
+});
 
 describe('Registeration and Login Testing', () => {
   let authToken = ""
@@ -37,7 +37,21 @@ describe('Registeration and Login Testing', () => {
       .expect(201);
   })
 
-  test('Login using the user', async () => {
+  test('Login using an invalid user', async () => {
+    const loginUser = {
+      username: "lmao",
+      password: "huhuhuh"
+    };
+
+    const res = await api
+      .post('/api/users/login')
+      .send(loginUser)
+      .expect(401);
+
+    await expect(res.body.error).toBeTruthy();
+  });
+
+  test('Login using a valid user', async () => {
     const loginUser = {
       username: "root",
       password: "Skret"
@@ -50,19 +64,37 @@ describe('Registeration and Login Testing', () => {
 
     await expect(res.body.username).toBe("root");
     authToken = res.body.token;
-  })
+  });
 
   test('Test connection with auth', async () => { 
-
     const res = await api
       .get('/')
       .set('Authorization', 'Bearer ' + authToken)
       .expect(200);
     
     await expect(res.body.content).toBe("Hello World");
-  })
-})
+  });
 
-afterAll( () => {
-  mongoose.disconnect();
-})
+  test('Test connection with invalid auth', async () => {
+    const res = await api
+      .get('/')
+      .set('Authorization', 'Bearer ' + 'invalidtoken')
+      .expect(401);
+    
+    await expect(res.body.error).toBeTruthy();
+  })
+
+  test('Test invalid endpoint with auth', async () => {
+    const res = await api
+      .get('/invalidEndpoint')
+      .set('Authorization', 'Bearer ' + authToken)
+      .expect(404);
+    
+    await expect(res.body.error).toBeTruthy();
+  })
+});
+
+afterAll( async () => {
+  /* To avoid jest open handle error */
+  await new Promise(resolve => setTimeout(() => resolve(), 1000)); 
+});

@@ -16,6 +16,11 @@ mongoose.connect(config.MONGO_URI, {
     logger.error(error); 
   } );
 
+const closeCon = () => {
+  mongoose.connection.close();
+}
+
 module.exports = {
   User,
+  closeCon,
 }
