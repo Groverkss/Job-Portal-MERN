@@ -2,7 +2,9 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
 
-mongoose.connect(config.URI, {
+const User = require('./models/user')
+
+mongoose.connect(config.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
@@ -12,4 +14,8 @@ mongoose.connect(config.URI, {
   } )
   .catch( error => {
     logger.error(error); 
-  } )
+  } );
+
+module.exports = {
+  User,
+}
