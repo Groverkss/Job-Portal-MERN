@@ -11,7 +11,7 @@ router.post('/register', async (req, res) => {
   const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
   const user = new User({
-    username: body.username,
+    email: body.email,
     firstName: body.firstName,
     lastName: body.lastName,
     passwordHash,
@@ -24,19 +24,19 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const body = req.body; 
 
-  const user = await User.findOne({ username: body.username });
+  const user = await User.findOne({ email: body.email });
   const passwordCorrect = user === null
     ? false
     : await bcrypt.compare(body.password, user.passwordHash);
 
   if (!(user && passwordCorrect)) {
     return res.status(401).json({
-      error: "Invalid Username or Password"
+      error: "Invalid Email or Password"
     });
   }
 
   const userForToken = {
-    username: user.username,
+    email: user.email,
     id: user._id
   };
 
@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
 
   res
     .status(200)
-    .json({ token, username: user.username });
+    .json({ token, email: user.email });
 })
 
 module.exports = router

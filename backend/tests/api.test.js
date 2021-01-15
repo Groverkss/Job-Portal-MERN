@@ -25,10 +25,10 @@ describe('Registeration and Login Testing', () => {
 
   test('Register a user', async () => {
     const newUser = {
-      username: "root",
+      email: "groverkss@gmail.com",
       firstName: "Kunwar",
       lastName: "Grover",
-      password: "Skret"
+      password: "Sekret"
     };
 
     await api
@@ -39,7 +39,7 @@ describe('Registeration and Login Testing', () => {
 
   test('Login using an invalid user', async () => {
     const loginUser = {
-      username: "lmao",
+      email: "grover@gmail.com",
       password: "huhuhuh"
     };
 
@@ -53,8 +53,8 @@ describe('Registeration and Login Testing', () => {
 
   test('Login using a valid user', async () => {
     const loginUser = {
-      username: "root",
-      password: "Skret"
+      email: "groverkss@gmail.com",
+      password: "Sekret"
     };
 
     const res = await api
@@ -62,7 +62,7 @@ describe('Registeration and Login Testing', () => {
       .send(loginUser)
       .expect(200);
 
-    await expect(res.body.username).toBe("root");
+    await expect(res.body.email).toBe("groverkss@gmail.com");
     authToken = res.body.token;
   });
 
