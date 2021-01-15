@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,6 +44,26 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   const classes = useStyles();
 
+  const [ login, setLogin ] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = event => {
+    setLogin({
+      ...login,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleSubmit = event => {
+    console.log(login);
+    setLogin({
+      email: "",
+      password: "",
+    });
+  };
+
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -56,11 +76,14 @@ const Login = () => {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
-            <TextField
+          <ValidatorForm onSubmit={handleSubmit} className={classes.form}>
+            <TextValidator
               variant="outlined"
               margin="normal"
-              required
+              validators={['required', 'isEmail']}
+              errorMessages={['This field is required', 'email is not valid']}
+              value={login.email}
+              onChange={handleChange}
               fullWidth
               id="email"
               label="Email Address"
@@ -68,10 +91,13 @@ const Login = () => {
               autoComplete="email"
               autoFocus
             />
-            <TextField
+            <TextValidator
               variant="outlined"
               margin="normal"
-              required
+              validators={['required']}
+              errorMessages={['This field is required']}
+              value={login.password}
+              onChange={handleChange}
               fullWidth
               name="password"
               label="Password"
@@ -93,7 +119,7 @@ const Login = () => {
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
-          </form>
+          </ValidatorForm>
         </div>
       </Grid>
     </Grid>

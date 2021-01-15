@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -32,6 +32,30 @@ const useStyles = makeStyles((theme) => ({
 
 const SignUp = () => {
   const classes = useStyles();
+  
+  const [ register, setRegister ] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    password: "",
+  });
+
+  const handleChange = (event) => {
+    setRegister({
+      ...register, 
+      [event.target.name]: event.target.value
+      });
+  }
+
+  const handleSubmit = (event) => {
+    console.log(register);
+    setRegister({
+      email: "",
+      firstName: "",
+      lastName: "",
+      password: "",
+    });
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -43,14 +67,17 @@ const SignUp = () => {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <ValidatorForm onSubmit={handleSubmit} className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <TextValidator
+                onChange={handleChange}
+                value={register.firstName}
                 autoComplete="fname"
                 name="firstName"
                 variant="outlined"
-                required
+                validators={['required']}
+                errorMessages={['This field is required']}
                 fullWidth
                 id="firstName"
                 label="First Name"
@@ -58,9 +85,12 @@ const SignUp = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
+              <TextValidator
+                onChange={handleChange}
+                value={register.lastName}
                 variant="outlined"
-                required
+                validators={['required']}
+                errorMessages={['This field is required']}
                 fullWidth
                 id="lastName"
                 label="Last Name"
@@ -69,9 +99,12 @@ const SignUp = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <TextValidator
+                onChange={handleChange}
+                value={register.email}
                 variant="outlined"
-                required
+                validators={['required', 'isEmail']}
+                errorMessages={['This field is required', 'email is not valid']}
                 fullWidth
                 id="email"
                 label="Email Address"
@@ -80,9 +113,12 @@ const SignUp = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
+              <TextValidator
+                onChange={handleChange}
+                value={register.password}
                 variant="outlined"
-                required
+                validators={['required']}
+                errorMessages={['This field is required']}
                 fullWidth
                 name="password"
                 label="Password"
@@ -108,7 +144,7 @@ const SignUp = () => {
               </Link>
             </Grid>
           </Grid>
-        </form>
+        </ValidatorForm>
       </div>
     </Container>
   );
