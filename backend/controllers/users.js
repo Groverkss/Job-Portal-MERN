@@ -14,10 +14,11 @@ router.post('/register', async (req, res) => {
     email: body.email,
     firstName: body.firstName,
     lastName: body.lastName,
+    type: body.type,
     passwordHash,
   })
 
-  const savedUser = await user.save();
+  await user.save();
   res.sendStatus(201).end();
 })
 
@@ -30,7 +31,8 @@ router.post('/login', async (req, res) => {
     : await bcrypt.compare(body.password, user.passwordHash);
 
   if (!(user && passwordCorrect)) {
-    return res.status(401).json({
+    return res.status(200).json({
+      status: 1,
       error: "Invalid Email or Password"
     });
   }
@@ -44,7 +46,7 @@ router.post('/login', async (req, res) => {
 
   res
     .status(200)
-    .json({ token, email: user.email });
+    .json({ token, status: 0, email: user.email });
 })
 
 module.exports = router

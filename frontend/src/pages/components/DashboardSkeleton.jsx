@@ -12,7 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import { mainListItems, secondaryListItems } from './listItems';
+import { applicantListItems, recruitListItems } from './listItems';
 
 const drawerWidth = 240;
 
@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Dashboard = () => {
+const Dashboard = ({ title, profileType, content, handlePage }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -104,6 +104,13 @@ const Dashboard = () => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  let menuList = "";
+  if (profileType === 0) {
+    menuList = applicantListItems(handlePage);
+  } else {
+    menuList = recruitListItems(handlePage); 
+  }
 
   return (
     <div className={classes.root}>
@@ -120,7 +127,7 @@ const Dashboard = () => {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+            { title }
           </Typography>
         </Toolbar>
       </AppBar>
@@ -137,27 +144,16 @@ const Dashboard = () => {
           </IconButton>
         </div>
         <Divider />
-        <List>{mainListItems}</List>
-        <Divider />
-        <List>{secondaryListItems}</List>
+        <List>{menuList}</List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          Hello World
-          {/* Put stuff here*/}
+          {content}
         </Container>
       </main>
     </div>
   );
 }
 
-const App = () => {
-  return (
-    <div>
-      <Dashboard />
-    </div>
-  );
-}
-
-export default App;
+export default Dashboard;

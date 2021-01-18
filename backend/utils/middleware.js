@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const config = require('./config')
+const logger = require('./logger')
 
 const extractToken = req => {
   const authorization = req.get("Authorization");
@@ -12,36 +13,46 @@ const extractToken = req => {
 const authCheck = (req, res, next) => {
   const token = extractToken(req);
   if (!token) {
-    return res.status(401).json({ error: "Token Missing or Invalid" });
+    return res.json({ 
+      status: 1, error: "Token Missing or Invalid" 
+    });
   }
   const decodedToken = jwt.verify(token, config.SECRET);
   if (!decodedToken.id) {
-    return res.status(401).json({ error: "Token Missing or Invalid" });
+    return res.json({ 
+      status: 1, error: "Token Missing or Invalid"
+    });
   }
-  req.authTokenId = decodedToken.id;
+  req.profileObj = decodedToken;
   next();
 }
 
-const unkownEndpoint = (req, res) => {
-  return res.status(404).send({ error: 'unkown endpoint' });
+const unkownEndpoint = (req, rest) => {
+  return res.send({
+    status: 1, error: 'unkown endpoint'
+  });
 }
 
 const errorHandler = (error, req, res, next) => {
   if (error.name === 'CaseError') {
-    return res.status(400).send({
+    return res.json({
+      status: 1,
       error: "Malformatted Id",
     });
   } else if (error.name === 'ValidationError') {
-    return res.status(400).json({
+    return res.json({
+      status: 1,
       error: error.message,
     });
   } else if (error.name === 'JsonWebTokenError') {
-    return res.status(401).json({
+    return res.json({
+      status: 1,
       error: 'Invalid Token',
     });
   }
 
   logger.error(error.message);
+  next();
 }
 
 module.exports = {

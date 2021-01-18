@@ -9,6 +9,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
+import LoginService from '../services/users.js'
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Login = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [ login, setLogin ] = useState({
     email: "",
@@ -56,12 +59,17 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = event => {
-    console.log(login);
-    setLogin({
-      email: "",
-      password: "",
-    });
+  const handleSubmit = async event => {
+    const res = await LoginService.loginUser(login);
+    if (res.status === 0) {
+      window.localStorage.setItem('Authorization', 'Bearer ' + res.token);
+      history.push('/');
+    } else {
+      setLogin({
+        email: "",
+        password: "",
+      });
+    }
   };
 
   return (

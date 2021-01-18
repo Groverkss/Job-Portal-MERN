@@ -9,6 +9,13 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
+import LoginService from '../services/users.js'
+import { useHistory } from 'react-router-dom'
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -28,33 +35,44 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  formControl: {
+    width: "100%"
+  }
 }));
 
 const SignUp = () => {
   const classes = useStyles();
-  
+  const history = useHistory();
+
   const [ register, setRegister ] = useState({
     email: "",
     firstName: "",
     lastName: "",
     password: "",
+    type: 0,
   });
 
   const handleChange = (event) => {
     setRegister({
       ...register, 
       [event.target.name]: event.target.value
-      });
+    });
   }
 
-  const handleSubmit = (event) => {
-    console.log(register);
-    setRegister({
-      email: "",
-      firstName: "",
-      lastName: "",
-      password: "",
-    });
+  const handleSubmit = async event => {
+    const res = await LoginService.registerUser(register);
+    if (res.status == 0) {
+      /* Success */
+      history.push('/login');
+    } else {
+      setRegister({
+        email: "",
+        firstName: "",
+        lastName: "",
+        password: "",
+        type: 0,
+      });
+    }
   }
 
   return (
@@ -114,8 +132,7 @@ const SignUp = () => {
             </Grid>
             <Grid item xs={12}>
               <TextValidator
-                onChange={handleChange}
-                value={register.password}
+                onChange={handleChange} value={register.password}
                 variant="outlined"
                 validators={['required']}
                 errorMessages={['This field is required']}
@@ -126,6 +143,22 @@ const SignUp = () => {
                 id="password"
                 autoComplete="current-password"
               />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl className={classes.formControl}>
+                <InputLabel id="demo-simple-select-helper-label">Age</InputLabel>
+                <Select
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  name="type"
+                  value={register.type}
+                  onChange={handleChange}
+                >
+                  <MenuItem value={0}>Applicant</MenuItem>
+                  <MenuItem value={1}>Recruiter</MenuItem>
+                </Select>
+                <FormHelperText>Select your use case</FormHelperText>
+              </FormControl>
             </Grid>
           </Grid>
           <Button
