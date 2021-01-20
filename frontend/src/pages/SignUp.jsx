@@ -61,10 +61,11 @@ const SignUp = () => {
 
   const handleSubmit = async event => {
     const res = await LoginService.registerUser(register);
-    if (res.status == 0) {
+    if (res.status === 0) {
       /* Success */
       history.push('/login');
     } else {
+      console.log(res.error);
       setRegister({
         email: "",
         firstName: "",

@@ -27,6 +27,12 @@ export const applicantListItems = (handlePage) => {
         </ListItemIcon>
       <ListItemText primary="My Applications" />
       </ListItem>
+      <ListItem value="editprofile" onClick={handlePage} button>
+        <ListItemIcon>
+        <AssignmentIcon />
+        </ListItemIcon>
+      <ListItemText primary="Edit Profile" />
+      </ListItem>
     </div>
   );
 }
@@ -51,6 +57,12 @@ export const recruitListItems = (handlePage) => {
         <AssignmentIcon />
         </ListItemIcon>
       <ListItemText primary="My Applications" />
+      </ListItem>
+      <ListItem value="editprofile" onClick={handlePage} button>
+        <ListItemIcon>
+        <AssignmentIcon />
+        </ListItemIcon>
+      <ListItemText primary="Edit Profile" />
       </ListItem>
     </div>
   );

@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const router = require('express').Router()
-const User = require('../mongo').User
+const { User, Applicant, Recruiter } = require('../mongo')
 const { SECRET } = require('../utils/config')
 
 router.post('/register', async (req, res) => {
@@ -18,7 +18,30 @@ router.post('/register', async (req, res) => {
     passwordHash,
   })
 
+  let profile;
+  if (body.type === 0) {
+    profile = new Applicant({
+      email: body.email,
+      education: [],
+      skills: [],
+      resume: "does-not-exist.pdf",
+      image: "does-not-exist.jpg",
+      rating: {
+        ratingSum: 0,
+        ratingTotal: 0,
+      }
+    })
+  } else {
+    profile = new Recruiter({
+      email: body.email,
+      contact: "Not provided yet",
+      bio: "This user has no Bio for now",
+      image: "does-not-exist.jpg",
+    })
+  }
+
   await user.save();
+  await profile.save();
   res.sendStatus(201).end();
 })
 

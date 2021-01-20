@@ -12,7 +12,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import Button from '@material-ui/core/Button'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { useHistory } from 'react-router-dom'
+
 import { applicantListItems, recruitListItems } from './listItems';
+import LoginService from '../../services/users'
 
 const drawerWidth = 240;
 
@@ -53,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    fontWeight: "bold",
   },
   drawerPaper: {
     position: 'relative',
@@ -95,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Dashboard = ({ title, profileType, content, handlePage }) => {
+const Dashboard = ({ title, profileDets, content, handlePage }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -105,8 +111,10 @@ const Dashboard = ({ title, profileType, content, handlePage }) => {
     setOpen(false);
   };
 
+  const history = useHistory();
+
   let menuList = "";
-  if (profileType === 0) {
+  if (profileDets.profileType === 0) {
     menuList = applicantListItems(handlePage);
   } else {
     menuList = recruitListItems(handlePage); 
@@ -129,6 +137,17 @@ const Dashboard = ({ title, profileType, content, handlePage }) => {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             { title }
           </Typography>
+          <Button 
+            variant="contained" 
+            color="secondary"
+            startIcon={<ExitToAppIcon />}
+            onClick={ () => { 
+              LoginService.removeToken();
+              history.push('/login');
+            } }
+          >
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer

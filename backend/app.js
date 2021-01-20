@@ -27,7 +27,7 @@ app.get('/api/test', (req, res) => {
   res.sendStatus(200).end();
 });
 
-app.use(unkownEndpoint);
 app.use(errorHandler);
+app.use(unkownEndpoint);
 
 module.exports = app

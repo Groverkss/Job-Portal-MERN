@@ -27,12 +27,6 @@ const authCheck = (req, res, next) => {
   next();
 }
 
-const unkownEndpoint = (req, rest) => {
-  return res.send({
-    status: 1, error: 'unkown endpoint'
-  });
-}
-
 const errorHandler = (error, req, res, next) => {
   if (error.name === 'CaseError') {
     return res.json({
@@ -54,6 +48,13 @@ const errorHandler = (error, req, res, next) => {
   logger.error(error.message);
   next();
 }
+
+const unkownEndpoint = (req, res) => {
+  return res.send({
+    status: 1, error: 'unkown endpoint'
+  });
+}
+
 
 module.exports = {
   authCheck,

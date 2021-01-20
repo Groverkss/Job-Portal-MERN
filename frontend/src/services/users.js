@@ -14,17 +14,13 @@ const registerUser = async user => {
       };
     } );
 
-  if (res.status !== 201) {
-    console.log("Incorrect status");
-    return {
-      status: 1,
-      error: "Status not right"
-    };
+  if (res.data.status === 1) {
+    return res.data;
   } else {
     return {
       status: 0,
-    };
-  };
+    }
+  }
 }
 
 const loginUser = async user => {
@@ -80,9 +76,20 @@ const setToken = () => {
   axios.defaults.headers.common['Authorization'] = auth;
 }
 
-export default { 
+const removeToken = () => {
+  try {
+    window.localStorage.removeItem('Authorization')
+  } catch {
+    console.log("Cannot remove Authorization from local storage")
+  }
+}
+
+const exportModule = {
   registerUser,
   loginUser,
   initDashboard, 
   setToken,
+  removeToken,
 }
+
+export default exportModule;
