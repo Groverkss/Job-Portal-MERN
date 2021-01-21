@@ -80,19 +80,36 @@ const Profile = () => {
               </ListSubheader>
             }>
 
-            <ListItem>
-              <ListItemText
-                primary="Narain Public School"
-                secondary="2017 - 2019"
-              />
-            </ListItem>
-            <Divider />
-            <ListItem>
-              <ListItemText
-                primary="International Institute of Information Technology, Hyderabad"
-                secondary="2019 - Present"
-              />
-            </ListItem>
+            {
+              profile.education.map( (val, index) => {
+                const formatDate = (date) => {
+                  let formattedDate = new Date(date);
+                  formattedDate = formattedDate.toDateString().split(" ");
+                  formattedDate = `${formattedDate[1]} ${formattedDate[3]}`
+
+                  if (formattedDate === "Jan 1900") {
+                    return "Present";
+                  } else {
+                    return formattedDate;
+                  }
+                }
+
+                return (
+                  <div key={`${val.name} ${val.startDate} ${val.endDate}`}>
+                    { index ? <Divider /> : "" }
+                    <ListItem >
+                      <ListItemText
+                        primary={val.name}
+                        secondary={`
+                    ${formatDate(val.startDate)}
+                    - 
+                    ${formatDate(val.endDate)}`}
+                      />
+                    </ListItem>
+                  </div>
+                )
+              } )
+            }
           </List>
         </Grid>
         <Grid item xs={6} className={classes.content}>
@@ -102,37 +119,25 @@ const Profile = () => {
                 Skills
               </ListSubheader>
             }>
+            {
+              profile.skills.map( (skill, index) => (
+                <>
+                  { index ? <Divider /> : "" }
+                  <ListItem>
+                    <ListItemText
+                      primary={skill}
+                    />
+                  </ListItem>
+                </>
+              ))
+            }
 
-            <ListItem>
-              <ListItemText
-                primary="JavaScript"
-              />
-            </ListItem>
-            <Divider />
-            <ListItem>
-              <ListItemText
-                primary="Python"
-              />
-            </ListItem>
-            <Divider />
-            <ListItem>
-              <ListItemText
-                primary="C/C++"
-              />
-            </ListItem>
-            <Divider />
-            <ListItem>
-              <ListItemText
-                primary="Bash"
-              />
-            </ListItem>
-            <Divider />
           </List>
         </Grid>
         <Grid item xs={3} className={classes.content}>
           <Link href={profile.resume}>
             <Button variant="contained" color="primary">
-            Resume
+              Resume
             </Button>
           </Link>
         </Grid>
@@ -143,13 +148,13 @@ const Profile = () => {
       <>
         <Grid item xs={12} className={classes.content}>
           <Typography>
-            Contact : 1234567890
+            {profile.contact}
           </Typography>
         </Grid>
         <Divider variant="middle" className={classes.divider}/>
         <Grid item xs={12} className={classes.content}>
           <Typography>
-            This user has no Bio for now
+            {profile.bio}
           </Typography>
         </Grid>
       </>

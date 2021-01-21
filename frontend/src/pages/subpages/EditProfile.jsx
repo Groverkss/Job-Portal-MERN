@@ -11,13 +11,9 @@ import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
 import TextField from '@material-ui/core/TextField';
 import { useState, useEffect } from 'react'
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 
 import ProfileService from '../../services/profile'
+import { EducationDialogForm, SkillDialogForm } from '../components/FormDialog'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,76 +49,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DialogForm = () => {
-  const [ open, setOpen ] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  return (
-    <>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleClickOpen}
-      >
-        Add Education
-    </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Add Education</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Leave End Date as Unchanged incase there is no End Date
-          </DialogContentText>
-          <Grid contaner>
-            <Grid item xs={12}>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Institute Name"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="Start Date"
-                type="date"
-                defaultValue="1900-01-01"
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label="End Date"
-                type="date"
-                defaultValue="1900-01-01"
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleClose} color="primary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
-}
 
 const EditForm = () => {
   const classes = useStyles();
 
   const [ profile, setProfile ] = useState({});
   const [ isLoading, setLoading ] = useState(true);
+  const [ education, setEducation ] = useState({
+    name: "",
+    startDate: "1900-01-01",
+    endDate: "1900-01-01",
+  });
+  const [ skill, setSkill ] = useState("");
 
   useEffect( () => {
     const setData = async () => {
@@ -143,8 +81,14 @@ const EditForm = () => {
     });
   }
 
-  const handleSubmit = () => {
-    console.log(profile);
+  const handleSubmit = async () => {
+    const res = await ProfileService.updateProfile(profile);
+
+    if (res.status === 1) {
+      console.log(res.error); 
+    } else {
+      console.log(res.content);
+    }
   }
 
   let renderSection = "";
@@ -160,16 +104,43 @@ const EditForm = () => {
                 Education
               </ListSubheader>
             }>
+            {
+              profile.education.map( (val, index) => {
+                const formatDate = (date) => {
+                  let formattedDate = new Date(date);
+                  formattedDate = formattedDate.toDateString().split(" ");
+                  formattedDate = `${formattedDate[1]} ${formattedDate[3]}`
 
+                  if (formattedDate === "Jan 1900") {
+                    return "Present";
+                  } else {
+                    return formattedDate;
+                  }
+                }
+
+                return (
+                  <div key={`${val.name} ${val.startDate} ${val.endDate}`}>
+                    { index ? <Divider /> : "" }
+                    <ListItem >
+                      <ListItemText
+                        primary={val.name}
+                        secondary={`
+                    ${formatDate(val.startDate)}
+                    - 
+                    ${formatDate(val.endDate)}`}
+                      />
+                    </ListItem>
+                  </div>
+                )
+              } )
+            }
             <ListItem>
-              <ListItemText
-                primary="Narain Public School"
-                secondary="2017 - 2019"
+              <EducationDialogForm
+                education={education}
+                setEducation={setEducation}
+                profile={profile}
+                setProfile={setProfile}
               />
-            </ListItem>
-            <Divider />
-            <ListItem>
-              <DialogForm />
             </ListItem>
           </List>
         </Grid>
@@ -180,22 +151,25 @@ const EditForm = () => {
                 Skills
               </ListSubheader>
             }>
-
+            {
+              profile.skills.map( (skill, index) => (
+                <>
+                  { index ? <Divider /> : "" }
+                  <ListItem>
+                    <ListItemText
+                      primary={skill}
+                    />
+                  </ListItem>
+                </>
+              ))
+            }
             <ListItem>
-              <ListItemText
-                primary="JavaScript"
+              <SkillDialogForm 
+                skill={skill}
+                setSkill={setSkill}
+                profile={profile}
+                setProfile={setProfile}
               />
-            </ListItem>
-            <Divider />
-            <ListItem>
-              <ListItemText
-                primary="Python"
-              />
-            </ListItem>
-            <ListItem>
-              <Button variant="contained" color="primary">
-                Add Skill
-              </Button>
             </ListItem>
           </List>
         </Grid>
@@ -211,21 +185,24 @@ const EditForm = () => {
       <>
         <Grid item xs={12} className={classes.content}>
           <TextField 
-            id="outlined-basic" 
             label="Contact" 
             variant="outlined"
             fullWidth
-            defaultValue="1234567890"
+            name="contact"
+            value={profile.contact}
+            onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12} className={classes.content}>
           <TextField 
             multiline
-            id="outlined-basic" 
-            label="Contact" 
+            rows={6}
+            label="Bio" 
             variant="outlined"
             fullWidth
-            defaultValue="This user has no Bio for now"
+            name="bio"
+            onChange={handleChange}
+            value={profile.bio}
           />
         </Grid>
       </>

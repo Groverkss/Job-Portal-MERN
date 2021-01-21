@@ -30,4 +30,41 @@ router.get('/details', async (req, res) => {
   });
 });
 
+router.post('/update', async (req, res) => {
+  const newProfile = req.body;
+  const user = await User.findOne({ email: req.profileObj.email });
+
+  if (newProfile.email !== req.profileObj.email) {
+    return res.json({
+      status: 1,
+      error: "Emails don't match",
+    });
+  }
+
+  await User.updateOne({ email: req.profileObj.email }, {
+    firstName: newProfile.firstName,
+    lastName: newProfile.lastName,
+  });
+
+  if (user.type === 0) {
+    await Applicant.updateOne({ email: req.profileObj.email }, {
+      education: newProfile.education,
+      skills: newProfile.skills,
+      resume: newProfile.resume,
+      image: newProfile.image,
+    });
+  } else {
+    await Recruiter.updateOne({ email: req.profileObj.email }, {
+      contact: newProfile.contact,
+      bio: newProfile.bio,
+      image: newProfile.image,
+    });
+  }
+
+  res.json({
+    status: 0,
+    content: "Profile Edited Succesfully",
+  });
+});
+
 module.exports = router

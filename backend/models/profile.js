@@ -19,14 +19,9 @@ const applicantSchema = new mongoose.Schema({
       endDate: Date,
     }
   ],
-  skills: [
-    {
-      name: {
-        type: String,
-        required: true,
-      }
-    }
-  ],
+  skills: [{
+    type: String,
+  }],
   resume: String,
   image: String,
   rating: {

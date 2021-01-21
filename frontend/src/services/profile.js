@@ -22,8 +22,23 @@ const getProfile = async () => {
   }
 }
 
+const updateProfile = async profile => {
+  UserService.setToken();
+  const res = await axios
+    .post('/profile/update', profile)
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      }
+    });
+
+  return res.data;
+}
+
 const exportModule = {
   getProfile, 
+  updateProfile,
 }
 
 export default exportModule;
