@@ -7,6 +7,7 @@ const { authCheck, unkownEndpoint, errorHandler } = require('./utils/middleware'
 
 const userRouter = require('./controllers/users')
 const profileRouter = require('./controllers/profile')
+const jobRouter = require('./controllers/job')
 
 app.use(morgan('dev'))
 app.use(cors());
@@ -18,6 +19,8 @@ app.use('/api/users', userRouter);
 app.use(authCheck)
 
 app.use('/api/profile', profileRouter);
+
+app.use('/api/job', jobRouter);
 
 app.get('/api/test', (req, res) => {
   res.json({

@@ -153,8 +153,6 @@ export const SkillDialogForm = ({ skill, setSkill, profile, setProfile }) => {
     }
   }
 
-  console.log(profile);
-
   return (
     <>
       <ButtonGroup variant="contained" color="primary">

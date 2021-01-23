@@ -10,10 +10,17 @@ const userSchema = new mongoose.Schema({
   lastName: String,
   passwordHash: String,
   type: Number,
+  applied: [{
+    job: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Job',
+    },
+    status: String,
+  }],
 });
 
 userSchema.plugin(uniqueValidator);
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User
+module.exports = User;

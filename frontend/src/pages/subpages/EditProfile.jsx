@@ -153,14 +153,14 @@ const EditForm = () => {
             }>
             {
               profile.skills.map( (skill, index) => (
-                <>
+                <div key={skill}>
                   { index ? <Divider /> : "" }
                   <ListItem>
                     <ListItemText
                       primary={skill}
                     />
                   </ListItem>
-                </>
+                </div>
               ))
             }
             <ListItem>
@@ -225,7 +225,7 @@ const EditForm = () => {
                     className={classes.avatar}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6} className={classes.formFieldLeft}>
+                <Grid item xs={12} sm={6}>
                   <TextField 
                     label="First Name" 
                     variant="outlined"
@@ -235,7 +235,7 @@ const EditForm = () => {
                     name="firstName"
                   />
                 </Grid>
-                <Grid item xs={12} sm={6} className={classes.formFieldRight}>
+                <Grid item xs={12} sm={6}>
                   <TextField 
                     label="Last Name" 
                     variant="outlined"

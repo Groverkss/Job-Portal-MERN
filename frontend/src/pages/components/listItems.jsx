@@ -46,13 +46,13 @@ export const recruitListItems = (handlePage) => {
         </ListItemIcon>
       <ListItemText primary="My Profile" />
       </ListItem>
-      <ListItem value="joblistings" onClick={handlePage} button>
+      <ListItem value="createjob" onClick={handlePage} button>
         <ListItemIcon>
         <ShoppingCartIcon />
         </ListItemIcon>
       <ListItemText primary="Create Job" />
       </ListItem>
-      <ListItem value="createjob" onClick={handlePage} button>
+      <ListItem value="myapplication" onClick={handlePage} button>
         <ListItemIcon>
         <AssignmentIcon />
         </ListItemIcon>

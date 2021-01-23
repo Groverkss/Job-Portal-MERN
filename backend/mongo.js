@@ -4,6 +4,7 @@ const logger = require('./utils/logger')
 
 const User = require('./models/user')
 const { Applicant, Recruiter } = require('./models/profile')
+const Job = require('./models/job')
 
 mongoose.connect(config.MONGO_URI, {
   useNewUrlParser: true,
@@ -24,6 +25,7 @@ const closeCon = () => {
 module.exports = {
   User,
   Applicant,
+  Job,
   Recruiter,
   closeCon,
 }

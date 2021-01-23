@@ -16,7 +16,8 @@ router.post('/register', async (req, res) => {
     lastName: body.lastName,
     type: body.type,
     passwordHash,
-  })
+    applied: [],  
+  });
 
   let profile;
   if (body.type === 0) {
