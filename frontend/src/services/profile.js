@@ -49,7 +49,6 @@ const getApplicant = async (email) => {
       }
     });
 
-  console.log(res.data);
   return res.data;
 }
 

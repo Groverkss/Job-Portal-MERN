@@ -64,6 +64,12 @@ export const recruitListItems = (handlePage) => {
         </ListItemIcon>
       <ListItemText primary="Edit Profile" />
       </ListItem>
+      <ListItem value="myemployees" onClick={handlePage} button>
+        <ListItemIcon>
+        <AssignmentIcon />
+        </ListItemIcon>
+      <ListItemText primary="My Employees"/>
+      </ListItem>
     </div>
   );
 }

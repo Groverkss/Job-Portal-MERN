@@ -50,7 +50,10 @@ const jobSchema = new mongoose.Schema({
       ref: 'User',
     },
     sop: String,
-  }]
+    status: String,
+    dateOfApplication: Date,
+  }],
+  creationDate: Date,
 });
 
 const Job = mongoose.model('Job', jobSchema);

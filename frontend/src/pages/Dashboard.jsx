@@ -9,6 +9,7 @@ import MyApplications from './subpages/MyApplications'
 import EditProfile from './subpages/EditProfile'
 import CreateJob from './subpages/CreateJob'
 import MyApplicationsRec from './subpages/MyApplicationsRec'
+import MyEmployees from './subpages/MyEmployees'
 
 const App = () => {
   const history = useHistory();
@@ -50,6 +51,8 @@ const App = () => {
     content = <CreateJob profileDets={profileDets} />
   } else if (page === "myapplicationrec") {
     content = <MyApplicationsRec />
+  } else if (page === "myemployees") {
+    content = <MyEmployees />
   }
 
   return (

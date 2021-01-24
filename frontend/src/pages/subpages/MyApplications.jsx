@@ -78,7 +78,7 @@ const App = () => {
         Duration : { job.duration ? `${job.duration} Months` : "Indefinate" }
       </Typography>
       <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        Deadline : { Date( job.deadline ).toString() }
+        Deadline : { new Date( job.deadline ).toString() }
       </Typography>
       <br />
       <Typography
@@ -99,9 +99,9 @@ const App = () => {
     </>
   );
 
-  const genAction = () => (
+  const genAction = (job) => (
     <Typography>
-    TODO
+      Status: {job.status}
     </Typography>
   );
 
@@ -110,7 +110,7 @@ const App = () => {
   useEffect( () => {
     const setData = async () => {
       const res = await JobService.getMy();
-      setJobs(res.applied.map( item => item.job ));
+      setJobs(res.applied);
     };
     setData();
   }, []);
@@ -121,10 +121,10 @@ const App = () => {
         <Grid container spacing={3}>
           {
             jobs.map( job => (
-              <div key={job._id}>
+              <div key={job.job._id}>
                 <Grid item>
                   <JobCard 
-                    content={genContent(job)}
+                    content={genContent(job.job)}
                     action={genAction(job)}
                   />
                 </Grid>

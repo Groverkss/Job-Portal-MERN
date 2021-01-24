@@ -94,13 +94,89 @@ const getJob = async (jobId) => {
   return res.data;
 }
 
+const editJob = async data => {
+  UserService.setToken();
+  const res = await axios
+    .post('/job/editJob', data)
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+}
+
+const shortListUser = async data => {
+  UserService.setToken();
+  const res = await axios
+    .post('/job/shortListUser', data)
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+}
+
+const acceptUser = async (data) => {
+  UserService.setToken();
+  const res = await axios
+    .post('/job/acceptUser', data)
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+}
+
+const rejectUser = async data => {
+  UserService.setToken();
+  const res = await axios
+    .post('/job/rejectUser', data)
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+}
+
+const deleteJob = async data => {
+  UserService.setToken();
+  console.log(data);
+  const res = await axios
+    .post('/job/deleteJob', data)
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+}
+
 const exportModule = {
   addJob,
   getAll,
   applyJob,
   getMy,
   getRecJobs,
-  getJob
+  getJob,
+  editJob,
+  shortListUser,
+  acceptUser,
+  rejectUser,
+  deleteJob,
 }
 
 export default exportModule;

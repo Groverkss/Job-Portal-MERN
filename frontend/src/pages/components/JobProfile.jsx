@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexWrap: 'wrap',
     '& > *': {
-      width: "100%",
     },
   },
   content: {
@@ -33,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const JobProfile = ({ email }) => {
+const JobProfile = ({ email, sop, doa }) => {
   const classes = useStyles();
 
   const [ profile, setProfile ] = useState({});
@@ -116,7 +115,7 @@ const JobProfile = ({ email }) => {
         </List>
       </Grid>
       <Grid item xs={3} className={classes.content}>
-        <Link href={profile.resume}>
+        <Link href={profile.resume} target="_blank">
           <Button variant="contained" color="primary">
             Resume
           </Button>
@@ -125,22 +124,32 @@ const JobProfile = ({ email }) => {
     </>
   )
 
-  console.log(profile);
   if (isLoading) {
     return "";
   } else {
     return (
       <div className={classes.root}>
-          <div className={classes.paperContent}>
-            <Grid container>
-              <Grid item xs={12} className={classes.content}>
-                <Typography>
-                  {profile.firstName} {profile.lastName}
-                </Typography>
-              </Grid>
-              {renderSection}
+        <div className={classes.paperContent}>
+          <Grid container>
+            <Grid item xs={12} className={classes.content}>
+              <Typography>
+                {profile.firstName} {profile.lastName}
+              </Typography>
             </Grid>
-          </div>
+            <Grid item xs={12}>
+              SOP: {sop} <br />
+              Date Of Application: {new Date(doa).toString()} <br />
+              Rating: 
+              <Rating
+                name="read-only"
+                value={(profile.rating.ratingSum/profile.rating.ratingTotal)} 
+                readOnly
+              />
+            </Grid>
+            <br />
+            {renderSection}
+          </Grid>
+        </div>
       </div>
     );
   }

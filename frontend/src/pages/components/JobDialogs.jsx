@@ -3,11 +3,13 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField';
 
 import JobService from '../../services/jobs'
+
+import ErrorDialog from '../components/ErrorDialog'
 
 export const SopDialogForm = ({ jobId, setData }) => {
   const [ open, setOpen ] = useState(false);
@@ -22,8 +24,17 @@ export const SopDialogForm = ({ jobId, setData }) => {
     setOpen(false);
   }
 
-  const handleApply = async event => {
-    await JobService.applyJob(jobId, sop);
+  const [ errorOpen, setErrorOpen ] = React.useState(false);
+  const [ errorContent, setErrorContent ] = React.useState("");
+
+  const handleError = (content) => {
+    setErrorContent(content);
+    setErrorOpen(true);
+  };
+
+  const handleApply = async () => {
+    const res = await JobService.applyJob(jobId, sop);
+    handleError(res.content);
     setData();
     handleClose();
   }
@@ -34,6 +45,12 @@ export const SopDialogForm = ({ jobId, setData }) => {
 
   return (
     <>
+      <ErrorDialog 
+        open={errorOpen}
+        setOpen={setErrorOpen}
+        title="Apply Job"
+        content={errorContent}
+      />
       <Button
         onClick={handleClickOpen}
       >
