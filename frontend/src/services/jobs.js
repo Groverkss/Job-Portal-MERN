@@ -36,9 +36,71 @@ const getAll = async job => {
   
 }
 
+const applyJob = async ( jobId, sop ) => {
+  UserService.setToken();
+  const res = await axios
+    .post('/job/apply', { jobId: jobId, sop: sop })
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+}
+
+const getMy = async () => {
+  UserService.setToken();
+  const res = await axios
+    .get('/job/getMy')
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+}
+
+const getRecJobs = async () => {
+  UserService.setToken();
+  const res = await axios
+    .get('/job/getRecJobs')
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+};
+
+const getJob = async (jobId) => {
+  UserService.setToken();
+  const res = await axios
+    .post('/job/getJob', {
+      jobId: jobId
+    })
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+}
+
 const exportModule = {
   addJob,
   getAll,
+  applyJob,
+  getMy,
+  getRecJobs,
+  getJob
 }
 
 export default exportModule;

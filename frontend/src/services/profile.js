@@ -36,9 +36,27 @@ const updateProfile = async profile => {
   return res.data;
 }
 
+const getApplicant = async (email) => {
+  UserService.setToken();
+  const res = await axios
+    .post('/profile/getGiven', {
+      email: email,
+    })
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      }
+    });
+
+  console.log(res.data);
+  return res.data;
+}
+
 const exportModule = {
   getProfile, 
   updateProfile,
+  getApplicant,
 }
 
 export default exportModule;

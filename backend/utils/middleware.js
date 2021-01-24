@@ -45,7 +45,7 @@ const errorHandler = (error, req, res, next) => {
     });
   }
 
-  logger.error(error.message);
+  logger.error(error);
   next();
 }
 

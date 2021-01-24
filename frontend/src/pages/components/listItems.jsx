@@ -52,7 +52,7 @@ export const recruitListItems = (handlePage) => {
         </ListItemIcon>
       <ListItemText primary="Create Job" />
       </ListItem>
-      <ListItem value="myapplication" onClick={handlePage} button>
+      <ListItem value="myapplicationrec" onClick={handlePage} button>
         <ListItemIcon>
         <AssignmentIcon />
         </ListItemIcon>

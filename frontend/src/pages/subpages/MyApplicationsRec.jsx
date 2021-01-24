@@ -4,8 +4,11 @@ import { JobCard } from '../components/JobCard'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Button from '@material-ui/core/Button'
 
 import JobService from '../../services/jobs'
+
+import { JobDashboard } from '../components/JobDashboard'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -99,18 +102,24 @@ const App = () => {
     </>
   );
 
-  const genAction = () => (
-    <Typography>
-    TODO
-    </Typography>
+  const genAction = job => (
+    <>
+      <JobDashboard jobId={job._id}/>
+      <Button>
+        Edit
+      </Button>
+      <Button>
+        Delete
+      </Button>
+    </>
   );
 
   const [ jobs, setJobs ] = useState([]);
 
   useEffect( () => {
     const setData = async () => {
-      const res = await JobService.getMy();
-      setJobs(res.applied.map( item => item.job ));
+      const res = await JobService.getRecJobs();
+      setJobs(res);
     };
     setData();
   }, []);

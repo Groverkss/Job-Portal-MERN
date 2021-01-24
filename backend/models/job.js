@@ -45,8 +45,11 @@ const jobSchema = new mongoose.Schema({
     ratingTotal: Number,
   },
   applied: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    applicant: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    sop: String,
   }]
 });
 

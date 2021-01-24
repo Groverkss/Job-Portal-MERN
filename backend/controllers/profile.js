@@ -7,6 +7,7 @@ router.get('/init', async(req, res) => {
     firstName: user.firstName,
     lastName: user.lastName,
     type: user.type,
+    _id: user._id,
   });
 });
 
@@ -64,6 +65,22 @@ router.post('/update', async (req, res) => {
   res.json({
     status: 0,
     content: "Profile Edited Succesfully",
+  });
+});
+
+router.post('/getGiven', async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+  let details = {};
+
+  details = await Applicant.findOne({ email: req.body.email });
+
+  const { passwordHash, _id, __v, ...rest} = {
+    ...user._doc,
+    ...details._doc,
+  };
+
+  res.json({
+    ...rest,
   });
 });
 

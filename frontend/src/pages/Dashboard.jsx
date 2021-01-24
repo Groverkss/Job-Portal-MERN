@@ -8,6 +8,7 @@ import JobListing from './subpages/JobListing'
 import MyApplications from './subpages/MyApplications'
 import EditProfile from './subpages/EditProfile'
 import CreateJob from './subpages/CreateJob'
+import MyApplicationsRec from './subpages/MyApplicationsRec'
 
 const App = () => {
   const history = useHistory();
@@ -16,6 +17,7 @@ const App = () => {
 
   const handlePage = (event) => {
     const value = event.currentTarget.getAttribute('value')
+
     setPage(value);
   }
 
@@ -46,6 +48,8 @@ const App = () => {
     content = <EditProfile profileDets={profileDets}/>
   } else if (page === "createjob") {
     content = <CreateJob profileDets={profileDets} />
+  } else if (page === "myapplicationrec") {
+    content = <MyApplicationsRec />
   }
 
   return (
