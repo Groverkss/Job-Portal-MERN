@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { Job, User } = require('../mongo')
+const { Job, User, Applicant } = require('../mongo')
 const logger = require('../utils/logger')
 
 router.get('/all', async (req, res) => {
@@ -182,6 +182,8 @@ router.post('/acceptUser', async (req, res) => {
   reqUser.status = "Accepted";
   reqJob.dateOfJoining = new Date();
   reqUser.dateOfJoining = new Date();
+  reqJob.rated = false;
+  reqUser.rated = false;
 
   await user.applied.forEach( async x => {
     if (x.job != data.jobId) {
@@ -233,6 +235,49 @@ router.post('/deleteJob', async (req, res) => {
   } );
 
   await job.remove();
+
+  res.sendStatus(200);
+})
+
+router.post('/rateUser', async (req, res) => {
+  const data = req.body;
+
+  const applicant = await Applicant.findOne({ email: data.email });
+  const job = await Job.findOne({ _id: data.jobId }).populate('applied.applicant');
+
+  applicant.rating.ratingTotal++;
+  applicant.rating.ratingSum += data.rating;
+
+  job.applied.forEach( (curr, index, arr) => {
+    if (curr.applicant.email === data.email) {
+      arr[index].rated = true;
+    }
+  })
+
+  applicant.save();
+  job.save();
+
+  res.sendStatus(200);
+});
+
+router.post('/rateJob', async (req, res) => {
+  const data = req.body;
+  const email = req.profileObj.email;
+
+  const user = await User.findOne({ email: email });
+  const job = await Job.findOne({ _id: data.jobId });
+
+  job.rating.ratingTotal++;
+  job.rating.ratingSum += data.rating
+
+  user.applied.forEach( (curr, index, arr) => {
+    if (String(curr.job) === String(data.jobId)) {
+      arr[index].rated = true;
+    }
+  })
+
+  user.save();
+  job.save();
 
   res.sendStatus(200);
 })

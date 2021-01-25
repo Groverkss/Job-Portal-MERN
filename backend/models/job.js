@@ -53,6 +53,7 @@ const jobSchema = new mongoose.Schema({
     status: String,
     dateOfApplication: Date,
     dateOfJoining: Date,
+    rated: Boolean,
   }],
   creationDate: Date,
 });

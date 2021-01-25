@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     status: String,
     dateOfJoining: Date,
+    rated: Boolean,
   }],
 });
 

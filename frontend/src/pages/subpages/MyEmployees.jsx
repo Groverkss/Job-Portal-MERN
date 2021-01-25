@@ -10,6 +10,8 @@ import Button from '@material-ui/core/Button'
 
 import JobService from '../../services/jobs'
 
+import RateApp from '../components/RateApp'
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -74,12 +76,14 @@ export const MyEmployees = () => {
       applied = applied.filter( app => app.status === "Accepted" )
       console.log(applied);
       unboxed.push( ...applied.map( app => (
-        {
+      {
           title: rest.title,
           type: rest.type,
           name: app.applicant.firstName + ' ' + app.applicant.lastName,
           email: app.applicant.email,
           dateOfJoining: app.dateOfJoining,
+          rated: app.rated,
+          jobId: rest._id,
         }
       )))
     });
@@ -88,7 +92,7 @@ export const MyEmployees = () => {
 
   useEffect( () => {
     setData();
-  }, [])
+  }, []);
 
   const genContent = (app) => (
     <>
@@ -108,9 +112,7 @@ export const MyEmployees = () => {
   );
 
   const genAction = (app) => (
-    <Typography>
-      TODO
-    </Typography>
+    <RateApp app={app} setData={setData}/> 
   );
 
   const [ filters, setFilters ] = useState({
@@ -198,15 +200,6 @@ export const MyEmployees = () => {
                   onClick={handleChange}
                 >
                   Date of Joining
-                </Button>
-                <Button 
-                  variant="contained" 
-                  color="primary"
-                  name="sort"
-                  value="rating"
-                  onClick={handleChange}
-                >
-                  Rating
                 </Button>
               </ButtonGroup>
             </Grid>

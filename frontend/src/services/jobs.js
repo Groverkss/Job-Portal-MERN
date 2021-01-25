@@ -152,9 +152,36 @@ const rejectUser = async data => {
 
 const deleteJob = async data => {
   UserService.setToken();
-  console.log(data);
   const res = await axios
     .post('/job/deleteJob', data)
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+};
+
+const rateUser = async data => {
+  UserService.setToken();
+  const res = await axios
+    .post('/job/rateUser', data)
+    .catch( err => {
+      console.log(err);
+      return {
+        status: 1,
+      };
+    } );
+
+  return res.data;
+}; 
+
+const rateJob = async data => {
+  UserService.setToken();
+  const res = await axios
+    .post('/job/rateJob', data)
     .catch( err => {
       console.log(err);
       return {
@@ -177,6 +204,8 @@ const exportModule = {
   acceptUser,
   rejectUser,
   deleteJob,
+  rateUser,
+  rateJob,
 }
 
 export default exportModule;

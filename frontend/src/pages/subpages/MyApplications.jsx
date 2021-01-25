@@ -7,6 +7,8 @@ import Container from '@material-ui/core/Container';
 
 import JobService from '../../services/jobs'
 
+import RateJob from '../components/RateJob'
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -79,21 +81,32 @@ const App = () => {
     </>
   );
 
-  const genAction = (job) => (
-    <Typography>
-      Status: {job.status}
-    </Typography>
-  );
+  const genAction = (job) => {
+    if (job.status === "Accepted") {
+      return ( 
+        <RateJob job={job} setData={setData} /> 
+      )
+    } else {
+      return (
+        <Typography>
+          Status: {job.status}
+        </Typography>
+      )
+    }
+  };
 
   const [ jobs, setJobs ] = useState([]);
 
+  const setData = async () => {
+    const res = await JobService.getMy();
+    setJobs(res.applied);
+  };
+
   useEffect( () => {
-    const setData = async () => {
-      const res = await JobService.getMy();
-      setJobs(res.applied);
-    };
     setData();
   }, []);
+
+  console.log(jobs);
 
   return (
     <>
