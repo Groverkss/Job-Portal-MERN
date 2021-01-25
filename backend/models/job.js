@@ -52,6 +52,7 @@ const jobSchema = new mongoose.Schema({
     sop: String,
     status: String,
     dateOfApplication: Date,
+    dateOfJoining: Date,
   }],
   creationDate: Date,
 });

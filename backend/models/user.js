@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
       ref: 'Job',
     },
     status: String,
+    dateOfJoining: Date,
   }],
 });
 

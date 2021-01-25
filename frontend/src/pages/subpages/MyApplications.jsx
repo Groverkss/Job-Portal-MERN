@@ -63,38 +63,18 @@ const App = () => {
   const genContent = (job) => (
     <>
       <Typography className={classes.title} color="textPrimary" gutterBottom>
-        { job.title }
+        { job.job.title }
       </Typography>
       <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        { job.type } • ${ job.salary } per month
+        { job.job.type } • ${ job.job.salary } per month
       </Typography>
       <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        { job.applications } Remaining Applications
+        Recruiter: {job.job.name}
       </Typography>
       <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        { job.positions } Remaining Position
-      </Typography>
-      <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        Duration : { job.duration ? `${job.duration} Months` : "Indefinate" }
-      </Typography>
-      <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        Deadline : { new Date( job.deadline ).toString() }
-      </Typography>
-      <br />
-      <Typography
-        className={classes.subtitle}
-        component="div"
-        color="textSecondary"
-      >
-        {
-          job.skills.map( skill => {
-            return (
-              <div key={skill}>
-              {skill}{" "}
-              </div>
-            );
-          })
-        }
+        Date Of Joining : { job.dateOfJoining 
+        ? new Date(job.dateOfJoining).toString() 
+        : "Not Applicable"}
       </Typography>
     </>
   );
@@ -124,7 +104,7 @@ const App = () => {
               <div key={job.job._id}>
                 <Grid item>
                   <JobCard 
-                    content={genContent(job.job)}
+                    content={genContent(job)}
                     action={genAction(job)}
                   />
                 </Grid>

@@ -97,6 +97,11 @@ router.get('/getMy', async (req, res) => {
     .findOne({ email: req.profileObj.email })
     .populate('applied.job');
 
+  await user._doc.applied.forEach( async curr => {
+    const getUser = await User.findOne({ email: curr.job.email });
+    curr.name = getUser.firstName + " " + getUser.lastName;
+  } )
+
   const { passwordHash, __v, ...rest } = user._doc;
 
   res.json(rest);
@@ -150,6 +155,20 @@ router.post('/shortListUser', async (req, res) => {
   res.sendStatus(200);
 });
 
+const rejectUser = async data => {
+  const user = await User.findOne({ _id: data.appId });
+  const job = await Job.findOne({ _id: data.jobId });
+ 
+  const reqJob = user.applied.find( job => String(job.job) === String(data.jobId) );
+  const reqUser = job.applied.find( app => String(app.applicant) === String(data.appId ));
+  
+  reqJob.status = "Rejected";
+  reqUser.status = "Rejected";
+
+  await user.save();
+  await job.save();
+}
+
 router.post('/acceptUser', async (req, res) => {
   const data = req.body;
 
@@ -161,6 +180,8 @@ router.post('/acceptUser', async (req, res) => {
   
   reqJob.status = "Accepted";
   reqUser.status = "Accepted";
+  reqJob.dateOfJoining = new Date();
+  reqUser.dateOfJoining = new Date();
 
   await user.applied.forEach( async x => {
     if (x.job != data.jobId) {
@@ -170,7 +191,7 @@ router.post('/acceptUser', async (req, res) => {
         String( app.applicant ) === String( user._id ) 
       ))
       getY.status = "Rejected";
-      y.save();
+      await y.save();
     }
     return job;
   });
@@ -178,24 +199,24 @@ router.post('/acceptUser', async (req, res) => {
   await user.save();
   await job.save();
 
+  const remainingPos = job.positions - job.applied.reduce( (accum, curr) => (
+    accum + ( curr.status === "Accepted" ? 1 : 0 )
+  ), 0);
+
+  if (remainingPos <= 0) {
+    await job.applied.forEach( async app => {
+      if (app.status === "Applied" || app.status === "Shortlisted") {
+        await rejectUser({ jobId: job._id, appId: app.applicant });
+      }
+    });
+  }
+
   res.sendStatus(200);
 });
 
 router.post('/rejectUser', async (req, res) => {
   const data = req.body;
-
-  const user = await User.findOne({ _id: data.appId });
-  const job = await Job.findOne({ _id: data.jobId });
- 
-  const reqJob = user.applied.find( job => job.job == data.jobId );
-  const reqUser = job.applied.find( app => app.applicant == data.appId );
-  
-  reqJob.status = "Rejected";
-  reqUser.status = "Rejected";
-
-  await user.save();
-  await job.save();
-
+  await rejectUser(data);
   res.sendStatus(200);
 });
 

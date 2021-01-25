@@ -74,67 +74,91 @@ const App = () => {
 
   const classes = useStyles();
 
-  const genContent = (job) => (
-    <>
-      <Typography className={classes.title} color="textPrimary" gutterBottom>
-        { job.title }
-      </Typography>
-      <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        { job.type } • ${ job.salary } per month
-      </Typography>
-      <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        { job.applications } Remaining Applications
-      </Typography>
-      <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        { job.positions } Remaining Position
-      </Typography>
-      <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        Recruiter : { job.name } 
-      </Typography>
-      <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        Duration : { job.duration ? `${job.duration} Months` : "Indefinate" }
-      </Typography>
-      <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
-        Deadline : { Date( job.deadline ).toString() }
-      </Typography>
-      <br />
-      <Typography
-        className={classes.subtitle}
-        component="div"
-        color="textSecondary"
-      >
-        {
-          job.skills.map( skill => {
-            return (
-              <div key={skill}>
-              {skill}{" "}
-              </div>
-            );
-          })
-        }
-      </Typography>
-    </>
-  );
+
+  const genContent = (job) => {
+    const remainingApp = job.applications - job.applied.reduce( (accum, curr) => (
+      accum + ( curr.status !== "Rejected" ? 1 : 0 )
+    ), 0);
+
+    const remainingPos = job.positions - job.applied.reduce( (accum, curr) => (
+      accum + ( curr.status === "Accepted" ? 1 : 0 )
+    ), 0);
+
+    return (
+      <>
+        <Typography className={classes.title} color="textPrimary" gutterBottom>
+          { job.title }
+        </Typography>
+        <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
+          { job.type } • ${ job.salary } per month
+        </Typography>
+        <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
+          { remainingApp } Remaining Applications
+        </Typography>
+        <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
+          { remainingPos } Remaining Position
+        </Typography>
+        <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
+          Recruiter : { job.name } 
+        </Typography>
+        <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
+          Duration : { job.duration ? `${job.duration} Months` : "Indefinate" }
+        </Typography>
+        <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
+          Deadline : {new Date( job.deadline ).toString() }
+        </Typography>
+        <br />
+        <Typography
+          className={classes.subtitle}
+          component="div"
+          color="textSecondary"
+        >
+          {
+            job.skills.map( skill => {
+              return (
+                <div key={skill}>
+                  {skill}{" "}
+                </div>
+              );
+            })
+          }
+        </Typography>
+      </>
+    );
+  }
 
   const [ user, setUser ] = useState("");
 
   const genAction = (job) => {
+    const remainingApp = job.applications - job.applied.reduce( (accum, curr) => (
+      accum + ( curr.status !== "Rejected" ? 1 : 0 )
+    ), 0);
+
     const check = job.applied.find( app => app.applicant === user._id );
 
-    if (!check) {
-      return (
-        <SopDialogForm 
-          jobId={job._id} 
-          setData={setData}
-        />
-      )
-    } else {
+    if (check) {
       return (
         <Button
           disabled
         >
           Applied
         </Button>
+      )
+    } else if (remainingApp <= 0) {
+      return (
+        <Button
+          disabled
+        >
+          Full
+        </Button>
+      )
+    } else {
+
+      return (
+        <SopDialogForm 
+          jobId={job._id} 
+          setData={setData}
+        />
       )
     }
   };
@@ -355,7 +379,14 @@ const App = () => {
         </div>
         <Grid container spacing={3}>
           {
-            filtered.map( job => (
+            filtered.filter( job => {
+              const remainingPos = job.positions - job.applied.reduce( (accum, curr) => (
+                accum + ( curr.status === "Accepted" ? 1 : 0 )
+              ), 0);
+              return remainingPos > 0;
+            } ).filter( job => (
+              new Date(job.deadline) > new Date()
+            )).map( job => (
               <div key={job._id}>
                 <Grid item>
                   <JobCard 

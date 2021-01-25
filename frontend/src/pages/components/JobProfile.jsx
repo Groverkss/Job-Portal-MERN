@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const JobProfile = ({ email, sop, doa }) => {
+const JobProfile = ({ email, sop, doa, jobStatus }) => {
   const classes = useStyles();
 
   const [ profile, setProfile ] = useState({});
@@ -144,7 +144,8 @@ const JobProfile = ({ email, sop, doa }) => {
                 name="read-only"
                 value={(profile.rating.ratingSum/profile.rating.ratingTotal)} 
                 readOnly
-              />
+              /> <br />
+              Status: {jobStatus}
             </Grid>
             <br />
             {renderSection}

@@ -147,7 +147,7 @@ const SignUp = () => {
             </Grid>
             <Grid item xs={12}>
               <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-helper-label">Age</InputLabel>
+                <InputLabel id="demo-simple-select-helper-label">Job Type</InputLabel>
                 <Select
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"

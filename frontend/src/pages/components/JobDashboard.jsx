@@ -66,7 +66,7 @@ const ShowSkills = ({ email }) => {
   );
 }
 
-export const JobDashboard = ({ jobId }) => {
+export const JobDashboard = ({ jobId, setRootData }) => {
   const classes = useStyles();
   const classes2 = useStyles2();
 
@@ -83,6 +83,7 @@ export const JobDashboard = ({ jobId }) => {
 
   const handleClose = () => {
     setOpen(false);
+    setRootData();
   };
 
   const setData = async () => {
@@ -243,7 +244,7 @@ export const JobDashboard = ({ jobId }) => {
         {
           job.applied
             ?.filter( app => (
-              app.status === "Applied" || app.status === "Shortlisted"
+              app.status !== "Rejected"
             ) )?.map( app => {
               return (
                 <Card className={classes.root} key={app.applicant.email}>
@@ -252,6 +253,7 @@ export const JobDashboard = ({ jobId }) => {
                       email={app.applicant.email} 
                       sop={app.sop} 
                       doa={app.dateOfApplication}
+                      jobStatus={app.status}
                     />         
                   </CardContent>
                   <CardActions>
@@ -275,13 +277,18 @@ export const JobDashboard = ({ jobId }) => {
                           : 
                         ""
                     }
-                    <Button
-                      size="small"
-                      onClick={handleReject}
-                      value={app.applicant._id}
-                    >
-                      Reject
-                    </Button>
+                    {
+                      app.status !== "Accepted"
+                        ?
+                          <Button
+                            size="small"
+                            onClick={handleReject}
+                            value={app.applicant._id}
+                          >
+                            Reject
+                          </Button>
+                          : ""
+                    }
                   </CardActions>
                 </Card>
               )
