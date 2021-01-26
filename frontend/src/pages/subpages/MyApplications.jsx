@@ -84,8 +84,13 @@ const App = () => {
   const genAction = (job) => {
     if (job.status === "Accepted") {
       return ( 
-        <RateJob job={job} setData={setData} /> 
-      )
+        <>
+          <Typography>
+            Status: {job.status}
+          </Typography>
+          <RateJob job={job} setData={setData} /> 
+        </>
+    )
     } else {
       return (
         <Typography>

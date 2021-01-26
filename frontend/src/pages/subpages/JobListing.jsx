@@ -15,6 +15,7 @@ import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import Slider from '@material-ui/core/Slider'
 import FuzzySearch from 'fuzzy-search'
+import Rating from '@material-ui/lab/Rating';
 
 import JobService from '../../services/jobs'
 import UserService from '../../services/users'
@@ -107,6 +108,11 @@ const App = () => {
         <Typography className={classes.subtitle} color="textSecondary" gutterBottom>
           Deadline : {new Date( job.deadline ).toString() }
         </Typography>
+        <Rating
+          name="read-only"
+          value={(job.rating.ratingSum/job.rating.ratingTotal)} 
+          readOnly
+        />
         <br />
         <Typography
           className={classes.subtitle}
@@ -127,6 +133,7 @@ const App = () => {
     );
   }
 
+
   const [ user, setUser ] = useState("");
 
   const genAction = (job) => {
@@ -139,6 +146,8 @@ const App = () => {
     if (check) {
       return (
         <Button
+          variant="outlined"
+          color="primary"
           disabled
         >
           Applied
@@ -182,19 +191,25 @@ const App = () => {
     order: 1,
     type: "none",
     duration: -1,
+    salary: [0, 100],
   });
 
-  const handleChange = event => {
+  const handleChange = (event, newVal) => {
     if (event.target.value !== undefined) {
       setFilters({
         ...filters,
         [event.target.name]: event.target.value,
       });
-    } else {
+    } else if (event.currentTarget.value != undefined){
       setFilters({
         ...filters,
         [event.currentTarget.name]: event.currentTarget.value,
       });
+    } else {
+      setFilters({
+        ...filters,
+        salary: newVal,
+      })
     }
   }
 
@@ -208,20 +223,22 @@ const App = () => {
     if (filters.sortBase === "salary") {
       return filters.order * (a.salary - b.salary);
     } else if (filters.sortBase === "duration") {
-      let newA = a.duration, newB = b.duration;
-      if (newA === 0) {
-        newA = 7;
+      return filters.order * (a.duration - b.duration);
+    } else if (filters.sortBase === "rating") {
+      let ratA = a.rating.ratingSum/a.rating.ratingTotal;
+      let ratB = b.rating.ratingSum/b.rating.ratingTotal;
+
+      if (!ratA) {
+        ratA = 0;
+      } 
+
+      if (!ratB) {
+        ratB = 0;
       }
 
-      if (newB === 0) {
-        newB = 7;
-      }
-
-      return filters.order * (newA - newB);
-    } else {
-      return a.salary - b.salary;
+      return (ratA - ratB) * filters.order;
     }
-  })
+  });
 
   filtered = filtered.filter( val => {
     if (filters.type === "none") {
@@ -229,15 +246,22 @@ const App = () => {
     } else {
       return val.type === filters.type;
     }
-  } )
+  });
 
   filtered = filtered.filter( val => {
     if (filters.duration === -1) {
       return true;
     } else {
-      return val.duration === filters.duration;
+      return val.duration < filters.duration;
     }
-  } )
+  } );
+
+  filtered = filtered.filter( job => (
+    ( job.salary >= filters.salary[0] ) * 100 && 
+    ( job.salary <= filters.salary[1] * 100 ) 
+  ));
+
+  console.log(filters);
 
   return (
     <>
@@ -338,14 +362,16 @@ const App = () => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={3} className={classes.contentLeft}>
-                    {/* Add value as an array [0, 100]*/}
                     <div className={classes.salary}>
                       <InputLabel>
-                        <Typography variant="caption">Filter Salary</Typography>
+                        <Typography variant="caption">Filter Salary ( in 100s )</Typography>
                       </InputLabel>
                       <Slider
+                        value={filters.salary}
                         className={classes.slider}
                         valueLabelDisplay="auto"
+                        name="salary"
+                        onChange={handleChange}
                       />
                     </div>
                   </Grid>
@@ -360,13 +386,13 @@ const App = () => {
                         <MenuItem value={-1}>
                           <em>None</em>
                         </MenuItem>
-                        <MenuItem value={0}>Indefinate</MenuItem>
                         <MenuItem value={1}>1</MenuItem>
                         <MenuItem value={2}>2</MenuItem>
                         <MenuItem value={3}>3</MenuItem>
                         <MenuItem value={4}>4</MenuItem>
                         <MenuItem value={5}>5</MenuItem>
                         <MenuItem value={6}>6</MenuItem>
+                        <MenuItem value={7}>7</MenuItem>
                       </Select>
                       <FormHelperText>Filter based on duration</FormHelperText>
                     </FormControl>
