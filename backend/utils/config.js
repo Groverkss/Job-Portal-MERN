@@ -9,8 +9,13 @@ if (process.env.NODE_ENV === 'test') {
 
 const SECRET = process.env.SECRET;
 
+const EMAIL = process.env.EMAIL;
+const PASSWORD = process.env.PASSWORD;
+
 module.exports = {
   PORT,
   MONGO_URI,
   SECRET,
+  EMAIL,
+  PASSWORD,
 }

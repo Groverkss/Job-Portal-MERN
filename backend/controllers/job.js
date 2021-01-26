@@ -1,6 +1,9 @@
 const router = require('express').Router()
 const { Job, User, Applicant } = require('../mongo')
 const logger = require('../utils/logger')
+const configEmail = require('../utils/config')
+
+const nodemailer = require('nodemailer')
 
 router.get('/all', async (req, res) => {
   let jobs = await Job.find({});
@@ -46,6 +49,38 @@ router.post('/add', async(req, res) => {
   })
 });
 
+const sendMail  = async (job, applicant) => {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: configEmail.EMAIL,
+      pass: configEmail.PASSWORD,
+    },
+    tls: {
+      rejectUnauthorized: false
+    }
+  }); 
+
+  try {
+
+    const output = `<h1>Congratulations!</h1><br>
+  <h3>${applicant.firstName}, you have been accepted for the job "${job.title}" by ${job.name}.</h3>`
+
+    await transporter.sendMail({
+      from: '"Job Paw" <jobpaw@gmail.com>', // sender address
+      to: `${applicant.email}`, // list of receivers
+      subject: "Letter of Acceptance", // Subject line
+      text: "Hello world?", // plain text body
+      html: output, // html body
+    });
+  }
+  catch (err) {
+    console.log(err);
+  }
+}
+
 router.post('/apply', async (req, res) => {
   const applicant = await User.findOne({ email: req.profileObj.email });
   const job = await Job.findOne({ _id: req.body.jobId });
@@ -85,6 +120,8 @@ router.post('/apply', async (req, res) => {
     status: "Applied"
   });
   await applicant.save();
+
+  await sendMail(job, applicant);
 
   return res.json({
     status: 0,
@@ -142,10 +179,10 @@ router.post('/shortListUser', async (req, res) => {
 
   const user = await User.findOne({ _id: data.appId });
   const job = await Job.findOne({ _id: data.jobId });
- 
+
   const reqJob = user.applied.find( job => job.job == data.jobId );
   const reqUser = job.applied.find( app => app.applicant == data.appId );
-  
+
   reqJob.status = "Shortlisted";
   reqUser.status = "Shortlisted";
 
@@ -158,10 +195,10 @@ router.post('/shortListUser', async (req, res) => {
 const rejectUser = async data => {
   const user = await User.findOne({ _id: data.appId });
   const job = await Job.findOne({ _id: data.jobId });
- 
+
   const reqJob = user.applied.find( job => String(job.job) === String(data.jobId) );
   const reqUser = job.applied.find( app => String(app.applicant) === String(data.appId ));
-  
+
   reqJob.status = "Rejected";
   reqUser.status = "Rejected";
 
@@ -174,10 +211,11 @@ router.post('/acceptUser', async (req, res) => {
 
   const user = await User.findOne({ _id: data.appId });
   const job = await Job.findOne({ _id: data.jobId });
- 
+
+
   const reqJob = user.applied.find( job => job.job == data.jobId );
   const reqUser = job.applied.find( app => app.applicant == data.appId );
-  
+
   reqJob.status = "Accepted";
   reqUser.status = "Accepted";
   reqJob.dateOfJoining = new Date();
@@ -212,6 +250,8 @@ router.post('/acceptUser', async (req, res) => {
       }
     });
   }
+
+  await sendMail(job, user);
 
   res.sendStatus(200);
 });
