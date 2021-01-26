@@ -121,8 +121,6 @@ router.post('/apply', async (req, res) => {
   });
   await applicant.save();
 
-  await sendMail(job, applicant);
-
   return res.json({
     status: 0,
     content: "Applied Successfully",
